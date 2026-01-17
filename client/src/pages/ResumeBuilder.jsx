@@ -3,11 +3,14 @@ import { Link, useParams } from 'react-router-dom'
 import { dummyResumeData } from '../assets/assets'
 import { ArrowLeftIcon, Briefcase,  ChevronLeft,  ChevronRight,  FileText, FolderIcon, GraduationCap, Sparkles, User } from 'lucide-react'
 import PersonalInfoForm from '../components/PersonalInfoForm'
+
+
 import ResumePreview from '../components/ResumePreview'
+import TemplateSelector from '../components/TemplateSelector'
 
 const ResumeBuilder = () => {
 
-  const { resumeId } = useParams
+  const { resumeId } = useParams()
 
   const [resumeData, setResumeData] = useState({
     _id: '',
@@ -46,9 +49,9 @@ const ResumeBuilder = () => {
 
   const activeSection = sections[activeSectionIndex]
 
-  useEffect (()=> {
-    loadExistingResume
-  }, [])
+  useEffect(() => {
+  loadExistingResume()
+}, [])
 
   return (
     <div>
@@ -69,14 +72,18 @@ const ResumeBuilder = () => {
            <hr className='absolute top-0 left-0 right-0 border-2
            border-gray-200'/>
            <hr className='absolute top-0 left-0 h-1 bg-gradient-to-r
-           from-green-500 to-green-600 border-none transitin-all duration-2000
+           from-green-500 to-green-600 border-none transition-all duration-2000
            ' style={{width:`${activeSectionIndex * 100 / (sections.length - 1)}%`}} />
 
            {/* section Navigation */}
-           <div className='flex justify-between items-center mb-6 border-b border-gray-300 py-1'>
-            <div>
-              
+           <div className='flex justify-between items-center mb-6 border-b
+           border-gray-300 py-1'>
+            
+            <div className='flex  items-center gap-2'>
+              <TemplateSelector selectedTemplate={resumeData.template}  onChange={(template)=>setResumeData(prev =>({... prev, template}))}/>
             </div>
+
+           
             <div className='flex items-center'>
               {activeSectionIndex !== 0 && (
                 <button onClick={()=> setActiveSectionIndex((prevIndex)=>Math.
@@ -88,8 +95,8 @@ const ResumeBuilder = () => {
               <button onClick={()=> setActiveSectionIndex((prevIndex)=>Math.
                   min(prevIndex + 1, sections.length - 1))} className={`flex
                   items-center gap-1 p-3 rounded-lg text-sm font-medium
-                  text-gray-600 hover:bg-gray-50 transition-all $
-                  {activeSectionIndex === sections.length - 1 && 'opacity-50'}`} disabled={activeSectionIndex === sections.length -1} >
+                  text-gray-600 hover:bg-gray-50 
+                  transition-all ${activeSectionIndex === sections.length - 1 && 'opacity-50'}`} disabled={activeSectionIndex === sections.length -1} >
                   Next <ChevronRight className='size-4'/> 
                 </button>
             </div>
@@ -111,8 +118,7 @@ const ResumeBuilder = () => {
           <div>
             {/* buttons */}
           </div>
-          <ResumePreview data={resumeData} template={resumeData.template}
-          accentColor={resumeData.accent_color} />
+          <ResumePreview data={resumeData} template={resumeData.template} accentColor={resumeData.accent_color}/>
          </div>
        </div>
       </div>
