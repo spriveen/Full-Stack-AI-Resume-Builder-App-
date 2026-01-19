@@ -97,13 +97,14 @@ const EducationForm = ({ data, onChange }) => {
                 />
 
                 <input
+                  type="date"
                   value={education.graduation_date || ""}
                   onChange={(e) =>
                     updateEducation(index, "graduation_date", e.target.value)
                   }
-                  type='month'
-                  className='px-3 py-2 text-sm disabled:bg-gray-100'
+                  className="px-3 py-2 text-sm border border-gray-300 rounded"
                 />
+
               </div>
 
               <input

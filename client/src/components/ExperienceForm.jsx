@@ -8,6 +8,7 @@ const ExperienceForm = ({data, onChange}) => {
         company: "",
         position: "",
         start_date:"",
+        end_date : "",
         description: "",
         is_current: false
     };
@@ -73,11 +74,34 @@ const ExperienceForm = ({data, onChange}) => {
                <input value={experience.position || ""} onChange={(e)=> updateExperience(index, "position", e.target.value)} type='text' placeholder='Job Title'
               className='px-3 py-2 text-sm rounded-lg'/>
 
-               <input value={experience.start_date || ""} onChange={(e)=> updateExperience(index, "start_date", e.target.value)} type='month' 
-              className='px-3 py-2 text-sm rounded-lg'/>
+               {/* <input value={experience.start_date || ""} onChange={(e)=> updateExperience(index, "start_date", e.target.value)} type='month' 
+              className='px-3 py-2 text-sm rounded-lg'/> */}
 
+              <input
+                  type="date"
+                  value={experience.start_date || ""}
+                  onChange={(e) =>
+                    updateExperience(index, "start_date", e.target.value)
+                  }
+                  className="px-3 py-2 text-sm border border-gray-300 rounded"
+                />
+
+
+
+{/* 
                <input value={experience.end_date || ""} onChange={(e)=> updateExperience(index, "end_date", e.target.value)} type='month' 
-             disabled={experience.is_current} className='px-3 py-2 text-sm rounded-lg disabled:bg-gray-100'/>
+             disabled={experience.is_current} className='px-3 py-2 text-sm rounded-lg disabled:bg-gray-100'/> */}
+
+                  <input
+                  type="date"
+                  value={experience.end_date || ""}
+                  onChange={(e) =>
+                    updateExperience(index, "end_date", e.target.value)
+                  }
+                  className="px-3 py-2 text-sm border border-gray-300 rounded"
+                />
+
+
            </div>
 
            <label className='flex items-center gap-2'>
