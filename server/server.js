@@ -3,11 +3,13 @@ import cors from "cors";
 import "dotenv/config";
 import connectDB from "./configs/db.js";
 import userRouter from "./routes/userRoutes.js";
+import resumeRoutes from './routes/resumeRoutes.js';
+
 
 const app = express();
 const PORT =process.env.PORT || 3000;
 
-// Dtabase Connection 
+// Database Connection 
 await connectDB()
 
 app.use(express.json())
@@ -16,6 +18,8 @@ app.use(cors())
 
 app.get('/', (req,res)=> res.send("Server is Live..."))
 app.use('/api/users', userRouter)
+app.use('/api/resumes', resumeRoutes);
+
 
 
 app.listen(PORT,()=>{

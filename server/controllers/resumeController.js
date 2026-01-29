@@ -1,5 +1,5 @@
-import imagekit from "../configs/imageKit";
-import Resume from "../models/Resume";
+import imagekit from "../configs/imageKit.js";
+import Resume from "../models/Resume.js";
 import fs from 'fs';
 
 
