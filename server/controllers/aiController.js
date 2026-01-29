@@ -1,4 +1,5 @@
 import Resume from "../models/Resume.js";
+import ai from "../configs/ai.js";
 
 //  controller for enhancing a resume professional summary
 
@@ -14,7 +15,7 @@ export const enhanceProfessionalSummary = async (req, res) => {
             return res.status(400).json({message:'Missing required fields'})
         }
       const response = await  ai.chat.completions.create({
-            model: process.env.OPENAI_MODEL
+            model: process.env.OPENAI_MODEL,
     messages: [
         {   role: "system",
             content: "You are an expert in resume writing.Your task is to enhance the professional summary of  resume. The summary should e 1-2 sentence also highlihting key skills, experience and career objectives.Make it compelling and ATS-Friendly.and only retuen text no option or anything else." 
@@ -43,7 +44,7 @@ export const enhanceJobDescription = async (req, res) => {
             return res.status(400).json({message:'Missing required fields'})
         }
       const response = await  ai.chat.completions.create({
-            model: process.env.OPENAI_MODEL
+            model: process.env.OPENAI_MODEL,
     messages: [
         {   role: "system",
             content: "You are an expert in resumr writing.Your task is to enhance the job description of aresume.The job descriptiom should be only in 1-2 sentence also highlitiing key responsibilities and achivements.Use action verbs and quantifiable results where possible.Make it ATS=Friendly.and only text no option or anything else" 
@@ -128,7 +129,7 @@ export const uploadResume = async (req, res) => {
    `
 
       const response = await  ai.chat.completions.create({
-            model: process.env.OPENAI_MODEL
+            model: process.env.OPENAI_MODEL,
     messages: [
         {   role: "system",
             content: systemPrompt
