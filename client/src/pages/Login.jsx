@@ -1,9 +1,14 @@
 import { Lock, Mail, User2Icon } from 'lucide-react'
 import React from 'react'
+import api from '../configs/api'
+import { useDispatch } from 'react-redux'
+import { login } from '../app/features/authSlice'
+import toast from 'react-hot-toast'
 
 const Login = () => {
 
-  const query = new URLSearchParams(window.location.search)
+    const dispatch =  useDispatch()
+    const query = new URLSearchParams(window.location.search)
   const urlState = query.get('state')
 
 const [state, setState] = React.useState(urlState|| "login")
@@ -16,7 +21,14 @@ const [state, setState] = React.useState(urlState|| "login")
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-
+        try {
+            const {data} = await api.post(`/api/users/${state}`, formData)
+            dispatch(login(data))
+            localStorage.setItem('token', data.token)
+            toast.success(data.message)
+        } catch (error) {
+           toast(error?.response?.data?.message || error.message) 
+        }
     }
 
     const handleChange = (e) => {
@@ -31,7 +43,7 @@ const [state, setState] = React.useState(urlState|| "login")
                 <p className="text-gray-500 text-sm mt-2">Please {state} to continue</p>
                 {state !== "login" && (
                     <div className="flex items-center mt-6 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                        <User2Icon size={16} color='687280'/>
+                        <User2Icon size={16} color='#687280'/>
                         <input type="text" name="name" placeholder="Name" className="border-none outline-none ring-0" value={formData.name} onChange={handleChange} required />
                     </div>
                 )}

@@ -4,9 +4,8 @@ import jwt from 'jsonwebtoken'
 import Resume from "../models/Resume.js";
 
 
-const generateToken = ()=>{
-    const token = jwt.sign({userId},process.env.JWT_SECRET, {expiresIn: '7d'})
-    return token
+const generateToken = (userId) => {
+    return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' })
 }
 
 
@@ -34,7 +33,7 @@ export const  registerUser = async (req, res) => {
        })
 
     //    return sucess message
-    const token = generateToken(userId._id)
+    const token = generateToken(newUser._id)
     newUser.password = undefined;
 
     return res.status(201).json({message:'User created sucessfully', token,
@@ -58,7 +57,7 @@ export const  loginUser = async (req, res) => {
             return res.status(400).json({message:'Invalid email or password'})
         }
       //   check if password is correct  
-      if(!user.comparePaasword(password)){
+         if(!user.comparePassword(password)){
          return res.status(400).json({message:'Invalid email or password'})
       }
 
@@ -103,7 +102,7 @@ try {
    const  userId = req.userId;
    
  //    return user resume
- const resumes = await  Resume.findById({userId})
+ const resumes = await Resume.find({ userId })
  return res.status(200).json({resumes})
 
 
