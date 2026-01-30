@@ -1,9 +1,15 @@
-import { FilePenLineIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloud, UploadCloudIcon, XIcon } from 'lucide-react'
+import { FilePenLineIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloudIcon, XIcon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import {dummyResumeData} from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import api from '../configs/api'
+import toast from 'react-hot-toast'
+
 
 const Dashboard = () => {
+
+   const {user, token} = useSelector(state => state.auth)
   
   const colors = ["#9333ea", "#d97706", "#dc2626", "#0284c7", "#16a34a"]
   const [allResumes,setAllResumes] = useState([])
@@ -20,9 +26,17 @@ const Dashboard = () => {
    }
 
    const createResume = async (event) => {  
-    event.preventDefault()
-    setShowCreateResume(false)
-    navigate(`/app/builder/res123`)
+    try {
+      event.preventDefault()
+      const {data} = await api.post('/api/resumes/create', {title},{headers:{
+        Authorization: token }})
+        setAllResumes([...allResumes, data.resume])
+        setTitle('')
+        setShowCreateResume(false)
+        navigate(`/app/builder/${data.resume._id}`)
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message)
+    }
    }
 
    const uploadResume = async (event) => {
@@ -49,7 +63,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className='maz-w-7xl mx-auto px-4 py-8'>
+      <div className='max-w-7xl mx-auto px-4 py-8'>
 
        <p className='text-2xl font-medium mb-6 bg-gradient-to-r from-slate-600 to-slate-700
        bg-clip-text text-transparent sm:hidden'>Welcome, John Doe</p>
@@ -85,7 +99,7 @@ const Dashboard = () => {
           <button key={index} onClick={()=>navigate(`/app/builder/${resume._id}`)} 
           className='relative w-full sm:max-w-36 h-48 flex
           flex-col items-center justify-center rounded-lg gap-2 border group
-          hover:shadow-lg ransition-all duration-300 cursor-pointer' style=
+          hover:shadow-lg transition-all duration-300 cursor-pointer' style=
           {{background:`linear-gradient(135deg, ${baseColor}10, ${baseColor}40)
           `, borderColor: baseColor + '40'}}>
              
@@ -154,7 +168,7 @@ const Dashboard = () => {
                 <p className='text-green-700'>{resume.name}</p>
                ):(
                 <>
-                <UploadCloud className='size-14 stroke-1' />
+                <UploadCloudIcon className='size-14 stroke-1' />
                 <p>Upload resume</p>
                 </>
                )}
