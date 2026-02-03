@@ -1,6 +1,6 @@
 import imagekit from "../configs/imageKit.js";
 import Resume from "../models/Resume.js";
-import fs from 'fs';
+import fs from 'fs'
 
 
 
@@ -79,40 +79,51 @@ export const getPublicResumeById = async (req, res) =>{
 
 // controller for updating a resume
 // PUT: /api/resume/update
- export const updateResume = async (req,res) =>{
-    try {
-       const userId  = req.userId;
-       const {resumeId, resumeData, removebackground} = req.body
-       const image = req.file;
+ 
+export const updateResume = async (req, res) => {
+  try {
+    const userId = req.userId
+    const { resumeId, resumeData, removebackground } = req.body
+    const image = req.file
 
-       let resumeDataCopy = JSON.parse(JSON.stringify(resumeData));
+    let resumeDataCopy = JSON.parse(JSON.stringify(resumeData))
 
-       if(image) {
+    if (image) {
+      const imageBufferData = fs.createReadStream(image.path)
 
-    const imageBufferData = fs.createReadStream(image.path)
-
-
-        const response = await imagekit.files.upload({
-      
+      const response = await imagekit.files.upload({
         file: imageBufferData,
         fileName: 'resume.png',
         folder: 'user-resumes',
         transformation: {
-            pre: 'w-300, h-300,fo-face,z-0.75' + 
+          pre:
+            'w-300,h-300,fo-face,z-0.75' +
             (removebackground ? ',e-bgremove' : '')
         }
-     });
-     resumeDataCopy.personal_info.image = response.url
-       }
+      })
 
-     const resume = await  Resume.findByIdAndUpdate({userId, _id:resumeId}, resumeDataCopy,
-        {new: true})
+      if (!resumeDataCopy.personal_info) {
+        resumeDataCopy.personal_info = {}
+      }
 
-        return res.status(200).json({message: 'Saved sucessfully', resume})
-
-    } catch (error) {
-        return res.status(400).json({message:error.message})
+      resumeDataCopy.personal_info.image = response.url
     }
- }
 
- 
+    const resume = await Resume.findOneAndUpdate(
+      { _id: resumeId, userId },
+      resumeDataCopy,
+      { new: true }
+    )
+
+    if (!resume) {
+      return res.status(404).json({ message: 'Resume not found' })
+    }
+
+    return res.status(200).json({
+      message: 'Saved successfully',
+      resume
+    })
+  } catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
