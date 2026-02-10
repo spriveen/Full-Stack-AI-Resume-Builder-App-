@@ -86,9 +86,28 @@ export const updateResume = async (req, res) => {
     const { resumeId, resumeData, removebackground } = req.body
     const image = req.file
 
-    let resumeDataCopy = JSON.parse(JSON.stringify(resumeData))
+    if (!resumeId || !resumeData) {
+      return res.status(400).json({ message: "resumeId and resumeData are required" })
+    }
 
+    // Parse resumeData safely
+    let resumeDataCopy
+    if (typeof resumeData === "string") {
+      try {
+        resumeDataCopy = JSON.parse(resumeData)
+      } catch (err) {
+        return res.status(400).json({ message: "resumeData is not valid JSON" })
+      }
+    } else {
+      resumeDataCopy = structuredClone(resumeData)
+    }
+
+    // Handle image upload
     if (image) {
+      if (!image.path) {
+        return res.status(400).json({ message: "Uploaded file is invalid" })
+      }
+
       const imageBufferData = fs.createReadStream(image.path)
 
       const response = await imagekit.files.upload({
@@ -102,10 +121,7 @@ export const updateResume = async (req, res) => {
         }
       })
 
-      if (!resumeDataCopy.personal_info) {
-        resumeDataCopy.personal_info = {}
-      }
-
+      if (!resumeDataCopy.personal_info) resumeDataCopy.personal_info = {}
       resumeDataCopy.personal_info.image = response.url
     }
 
@@ -115,15 +131,14 @@ export const updateResume = async (req, res) => {
       { new: true }
     )
 
-    if (!resume) {
-      return res.status(404).json({ message: 'Resume not found' })
-    }
+    if (!resume) return res.status(404).json({ message: "Resume not found" })
 
     return res.status(200).json({
-      message: 'Saved successfully',
+      message: "Saved successfully",
       resume
     })
   } catch (error) {
-    return res.status(400).json({ message: error.message })
+    console.error("Update Resume Error:", error)
+    return res.status(500).json({ message: "Server error while updating resume" })
   }
 }
